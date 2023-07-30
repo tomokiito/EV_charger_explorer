@@ -1,5 +1,5 @@
-from .forms import SearchForm
-from .services import get_stations_near
+from app.forms import SearchForm
+from app.services import get_stations_near
 
 import os
 from dotenv import load_dotenv
