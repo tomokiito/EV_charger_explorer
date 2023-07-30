@@ -1,1 +1,1 @@
-web: waitress-serve --port=$PORT app.app:app
+web: python -m flask run --host=0.0.0.0 --port=${PORT:-5000}
