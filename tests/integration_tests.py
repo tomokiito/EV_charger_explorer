@@ -1,18 +1,21 @@
-# tests/integration_tests.py
+"""
+This file contains integration tests for the app.
+It tests the behavior of the app with its dependencies on external services.
+This includes testing the correct response from the app when submitting the search form and when receiving data from the external services.
+"""
+
 import pytest
 from unittest.mock import patch
-from app.app import app as flask_app
+from app.app import app as flask_app  # your application's Flask object
 from app.services import get_stations_near
 
 @pytest.fixture
 def app():
     yield flask_app
 
-
 @pytest.fixture
 def client(app):
     return app.test_client()
-
 
 @patch('app.services.get_charging_stations')
 @patch('app.services.get_geocode')
