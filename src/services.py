@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import requests
 
 def get_charging_stations(api_key, lat, lon):
@@ -16,9 +18,9 @@ def get_geocode(address, api_key):
     return data[0]["lat"], data[0]["lon"]
 
 def get_stations_near(address):
-    # Use your actual API keys here
-    locationiq_api_key = "pk.516fd8c75f0b501134144f0fca6169c0"
-    openchargemap_api_key = "4be6f4c9-015c-4507-bc70-e40ee82d3919"
+    #API keys
+    locationiq_api_key = os.getenv('LOCATIONIQ_API_KEY')
+    openchargemap_api_key = os.getenv('OPENCHARGEMAP_API_KEY')
 
     lat, lon = get_geocode(address, locationiq_api_key)
     stations = get_charging_stations(openchargemap_api_key, lat, lon)
