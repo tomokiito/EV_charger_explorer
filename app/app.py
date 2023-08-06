@@ -1,5 +1,5 @@
-from EV_charger_explorer.app.forms import SearchForm
-from EV_charger_explorer.app.services import get_stations_near
+from app.forms import SearchForm
+from app.services import get_stations_near
 
 import os
 from dotenv import load_dotenv
