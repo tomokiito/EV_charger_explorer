@@ -5,6 +5,7 @@ from unittest.mock import patch, Mock
 from EV_charger_explorer.app.services import get_charging_stations
 from EV_charger_explorer.app.services import get_geocode
 from EV_charger_explorer.app.services import get_stations_near
+from EV_charger_explorer.app.services import autocomplete_address
 
 
 @patch('requests.get')
@@ -148,3 +149,50 @@ def test_get_stations_near(mock_get_geocode, mock_get_charging_stations):
     openchargemap_api_key = os.getenv('OPENCHARGEMAP_API_KEY')
     mock_get_geocode.assert_called_once_with(address, locationiq_api_key)
     mock_get_charging_stations.assert_called_once_with(openchargemap_api_key, "51.5074", "0.1278")
+
+
+
+@patch('requests.get')
+def test_autocomplete_address(mock_get):
+    # Set up the mock
+    mock_response = mock_get.return_value
+    mock_response.json.return_value = [
+        {
+            'display_name': 'Osaka, Osaka Prefecture, Japan',
+            'lat': '34.6197',
+            'lon': '135.4927'
+        },
+        {
+            'display_name': 'Osaka, Osaka Prefecture, USA',
+            'lat': '37.1742',
+            'lon': '-96.3037'
+        }
+    ]
+
+    # Call the function with a mock
+    result = autocomplete_address('Osaka')
+
+    # Assert the correct call was made to requests.get
+    mock_get.assert_called_once_with(
+        'https://api.locationiq.com/v1/autocomplete',
+        params={
+            'key': os.getenv('LOCATIONIQ_API_KEY'),
+            'q': 'Osaka',
+            'limit': 5,
+            'dedupe': 1
+        }
+    )
+
+    # Assert the function returned the correct result
+    assert result == [
+        {
+            'display_name': 'Osaka, Osaka Prefecture, Japan',
+            'lat': '34.6197',
+            'lon': '135.4927'
+        },
+        {
+            'display_name': 'Osaka, Osaka Prefecture, USA',
+            'lat': '37.1742',
+            'lon': '-96.3037'
+        }
+    ]

@@ -63,3 +63,16 @@ def get_stations_near(address):
     stations = get_charging_stations(openchargemap_api_key, lat, lon)
 
     return stations
+
+
+def autocomplete_address(query):
+    api_key = os.getenv('LOCATIONIQ_API_KEY')
+    url = f'https://api.locationiq.com/v1/autocomplete'
+    params = {
+        'key': api_key,
+        'q': query,
+        'limit': 5,
+        'dedupe': 1
+    }
+    response = requests.get(url, params=params)
+    return response.json()

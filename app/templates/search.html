@@ -1,14 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Charging Stations</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
 <body>
     <h1>Search for EV charging stations</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
         <p>
             {{ form.address.label }}<br>
-            {{ form.address(size=32) }}
+            <input type="text" id="address" name="address" list="address_list">
+            <datalist id="address_list"></datalist>
         </p>
         <p>{{ form.submit() }}</p>
     </form>
 </body>
+
+<script>
+$(document).ready(function() {
+    $('#address').on('keyup', function() {
+        var query = $(this).val();
+        if (query.length > 2 && query.length < 7) {
+            $.getJSON('/autocomplete', {
+                q: query
+            }, function(data) {
+                var options = '';
+                for (var i in data) {
+                    options += '<option value="' + data[i].display_name + '">';
+                }
+                $('#address_list').html(options);
+            });
+        }
+    });
+
+    $('#address').on('input', function() {
+        var val = $('#address_list [value="' + $(this).val() + '"]').data('value');
+        if (val) {
+            $(this).val(val);
+        }
+    });
+});
+</script>
 </html>
