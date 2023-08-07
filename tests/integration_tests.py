@@ -6,8 +6,8 @@ This includes testing the correct response from the app when submitting the sear
 
 import pytest
 from unittest.mock import patch
-from app.app import app as flask_app  # your application's Flask object
-from app.services import get_stations_near
+from EV_charger_explorer.app import app as flask_app  # your application's Flask object
+from EV_charger_explorer.app.services import get_stations_near
 
 @pytest.fixture
 def app():
@@ -17,8 +17,8 @@ def app():
 def client(app):
     return app.test_client()
 
-@patch('app.services.get_charging_stations')
-@patch('app.services.get_geocode')
+@patch('EV_charger_explorer.app.services.get_charging_stations')
+@patch('EV_charger_explorer.app.services.get_geocode')
 def test_search_form_submission(mock_get_geocode, mock_get_charging_stations, client):
     # Given an address
     address = "221B Baker Street, London"

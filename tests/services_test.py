@@ -2,9 +2,9 @@ import os
 import pytest
 
 from unittest.mock import patch, Mock
-from app.services import get_charging_stations
-from app.services import get_geocode
-from app.services import get_stations_near
+from EV_charger_explorer.app.services import get_charging_stations
+from EV_charger_explorer.app.services import get_geocode
+from EV_charger_explorer.app.services import get_stations_near
 
 
 @patch('requests.get')
@@ -13,12 +13,28 @@ def test_get_charging_stations(mock_get):
     mock_response_data = [
         {
             'AddressInfo': {
-                'Title': 'Station 1'
-            }
-        },
-        {
-            'AddressInfo': {
-                'Title': 'Station 2'
+                'Title': 'Smart Park - 3rd & Alder'
+            },
+            'ID': 249057,
+            'Connections': [
+                {
+                    'ConnectionTypeID': 1,
+                    'ConnectionType': {'Title': 'Type 1 (J1772)'},
+                    'Reference': None,
+                    'LevelID': 2,
+                    'Level': {'Title': 'Level 2 : Medium (Over 2kW)'},
+                    'Amps': 16,
+                    'Voltage': 230,
+                    'PowerKW': 3.7,
+                    'CurrentTypeID': 10,
+                    'CurrentType': {'Title': 'AC (Single-Phase)'},
+                    'Quantity': 6,
+                    'Comments': 'kW power is an estimate based on the connection type'
+                }
+            ],
+            'StatusType': {
+                'ID': 50,
+                'Title': 'Operational'
             }
         }
     ]
@@ -29,12 +45,35 @@ def test_get_charging_stations(mock_get):
     # Call the function with a test API key and coordinates
     result = get_charging_stations('test_api_key', '0', '0')
 
+    # Define the expected result based on the provided response
+    expected_result = [
+        {
+            'Title': 'Smart Park - 3rd & Alder',
+            'ID': 249057,
+            'ConnectionTypeID': 1,
+            'ConnectionType': 'Type 1 (J1772)',
+            'Reference': None,
+            'StatusTypeID': 50,
+            'StatusType': 'Operational',
+            'LevelID': 2,
+            'Level': 'Level 2 : Medium (Over 2kW)',
+            'Amps': 16,
+            'Voltage': 230,
+            'PowerKW': 3.7,
+            'CurrentTypeID': 10,
+            'CurrentType': 'AC (Single-Phase)',
+            'Quantity': 6,
+            'Comments': 'kW power is an estimate based on the connection type'
+        }
+    ]
+
     # Assert that the function returns the expected result
-    assert result == ['Station 1', 'Station 2']
+    assert result == expected_result
 
 
 
-@patch('app.services.requests.get')
+
+@patch('EV_charger_explorer.app.services.requests.get')
 def test_get_geocode(mock_get):
     mock_response = Mock()
     mock_get.return_value = mock_response
@@ -94,8 +133,8 @@ def test_get_geocode(mock_get):
 
 
 
-@patch('app.services.get_charging_stations')
-@patch('app.services.get_geocode')
+@patch('EV_charger_explorer.app.services.get_charging_stations')
+@patch('EV_charger_explorer.app.services.get_geocode')
 def test_get_stations_near(mock_get_geocode, mock_get_charging_stations):
     mock_get_geocode.return_value = ("51.5074", "0.1278")  # Assume London coordinates for testing
     mock_get_charging_stations.return_value = ['Station 1', 'Station 2', 'Station 3']  # Mock response
