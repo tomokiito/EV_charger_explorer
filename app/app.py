@@ -11,6 +11,7 @@ load_dotenv()  # take environment variables from .env.
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config['GOOGLE_MAPS_API_KEY'] = os.getenv('GOOGLE_MAPS_API_KEY')
 
 @app.route('/', methods=['GET', 'POST'])
 def search():
@@ -18,7 +19,7 @@ def search():
     if form.validate_on_submit():
         address = form.address.data
         stations = get_stations_near(address)
-        return render_template('stations.html', stations=stations)
+        return render_template('stations.html', stations=stations, google_maps_api_key=app.config['GOOGLE_MAPS_API_KEY'])
     return render_template('search.html', form=form)
 
 

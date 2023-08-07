@@ -16,9 +16,10 @@ def get_value_safe(data, *keys):
     except TypeError:
         return None
 
+
 def get_charging_stations(api_key, lat, lon):
     distance_unit = "KM"
-    distance = 10
+    distance = 1
     url = f"https://api.openchargemap.io/v3/poi/?key={api_key}&latitude={lat}&longitude={lon}&distanceunit={distance_unit}&distance={distance}"
     response = requests.get(url)
     data = response.json()
@@ -41,7 +42,9 @@ def get_charging_stations(api_key, lat, lon):
             "CurrentTypeID": get_value_safe(item, 'Connections', 0, 'CurrentTypeID'),
             "CurrentType": get_value_safe(item, 'Connections', 0, 'CurrentType', 'Title'),
             "Quantity": get_value_safe(item, 'Connections', 0, 'Quantity'),
-            "Comments": get_value_safe(item, 'Connections', 0, 'Comments')
+            "Comments": get_value_safe(item, 'Connections', 0, 'Comments'),
+            "Latitude": get_value_safe(item, 'AddressInfo', 'Latitude'),
+            "Longitude": get_value_safe(item, 'AddressInfo', 'Longitude')
         }
         stations.append(station_info)
     return stations

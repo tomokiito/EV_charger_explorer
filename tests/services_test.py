@@ -14,7 +14,9 @@ def test_get_charging_stations(mock_get):
     mock_response_data = [
         {
             'AddressInfo': {
-                'Title': 'Smart Park - 3rd & Alder'
+                'Title': 'Smart Park - 3rd & Alder',
+                'Latitude':45.5187793,
+                'Longitude':-122.6775607
             },
             'ID': 249057,
             'Connections': [
@@ -64,7 +66,9 @@ def test_get_charging_stations(mock_get):
             'CurrentTypeID': 10,
             'CurrentType': 'AC (Single-Phase)',
             'Quantity': 6,
-            'Comments': 'kW power is an estimate based on the connection type'
+            'Comments': 'kW power is an estimate based on the connection type',
+            'Latitude':45.5187793,
+            'Longitude':-122.6775607
         }
     ]
 

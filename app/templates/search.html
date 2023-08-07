@@ -22,7 +22,7 @@
 $(document).ready(function() {
     $('#address').on('keyup', function() {
         var query = $(this).val();
-        if (query.length > 2 && query.length < 7) {
+        if (query.length > 2 && query.length < 10) {
             $.getJSON('/autocomplete', {
                 q: query
             }, function(data) {
