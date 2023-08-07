@@ -5,7 +5,8 @@ This includes testing the correct response from the Flask app and the correct fo
 """
 
 import pytest
-from app.app import app as flask_app  # your application's Flask object
+from EV_charger_explorer.app.app import app as flask_app  # your application's Flask object
+
 
 @pytest.fixture
 def app():
