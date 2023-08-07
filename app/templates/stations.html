@@ -6,10 +6,49 @@
 </head>
 <body>
 <h1>Charging Stations</h1>
-<ul>
-    {% for station in stations %}
-        <li>{{ station }}</li>
-    {% endfor %}
-</ul>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>ID</th>
+            <th>ConnectionTypeID</th>
+            <th>ConnectionType</th>
+            <th>Reference</th>
+            <th>StatusTypeID</th>
+            <th>StatusType</th>
+            <th>LevelID</th>
+            <th>Level</th>
+            <th>Amps</th>
+            <th>Voltage</th>
+            <th>PowerKW</th>
+            <th>CurrentTypeID</th>
+            <th>CurrentType</th>
+            <th>Quantity</th>
+            <th>Comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for station in stations %}
+        <tr>
+            <td>{{ station['Title'] }}</td>
+            <td>{{ station['ID'] }}</td>
+            <td>{{ station['ConnectionTypeID'] }}</td>
+            <td>{{ station['ConnectionType'] }}</td>
+            <td>{{ station['Reference'] }}</td>
+            <td>{{ station['StatusTypeID'] }}</td>
+            <td>{{ station['StatusType'] }}</td>
+            <td>{{ station['LevelID'] }}</td>
+            <td>{{ station['Level'] }}</td>
+            <td>{{ station['Amps'] }}</td>
+            <td>{{ station['Voltage'] }}</td>
+            <td>{{ station['PowerKW'] }}</td>
+            <td>{{ station['CurrentTypeID'] }}</td>
+            <td>{{ station['CurrentType'] }}</td>
+            <td>{{ station['Quantity'] }}</td>
+            <td>{{ station['Comments'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </body>
 </html>
