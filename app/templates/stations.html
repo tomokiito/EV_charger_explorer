@@ -12,31 +12,41 @@
     <script>
         var map;
         function initMap() {
-            var totalLat = 0;
-            var totalLng = 0;
+            var latSum = 0;
+            var lngSum = 0;
             var count = 0;
             {% for station in stations %}
-                totalLat += {{ station['Latitude'] }};
-                totalLng += {{ station['Longitude'] }};
+                latSum += {{ station['Latitude'] }};
+                lngSum += {{ station['Longitude'] }};
                 count++;
             {% endfor %}
-    
-            var avgLat = totalLat / count;
-            var avgLng = totalLng / count;
+            var centerLat = latSum / count;
+            var centerLng = lngSum / count;
     
             map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: avgLat, lng: avgLng},
+                center: {lat: centerLat, lng: centerLng},
                 zoom: 14
             });
     
             {% for station in stations %}
-                var marker = new google.maps.Marker({
-                    position: {lat: {{ station['Latitude'] }}, lng: {{ station['Longitude'] }}},
-                    map: map
-                });
+                addMarker({{ station['Latitude'] }}, {{ station['Longitude'] }}, '{{ station['Title']|replace("'", "\\'") }}');
             {% endfor %}
         }
-    </script>
+    
+        function addMarker(lat, lng, title) {
+            var marker = new google.maps.Marker({
+                position: {lat: lat, lng: lng},
+                map: map
+            });
+            var infoWindow = new google.maps.InfoWindow({
+                content: '<h5>' + title + '</h5>'
+            });
+            marker.addListener('click', function() {
+                infoWindow.open(map, marker);
+            });
+        }
+    </script>    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <h1>Charging Stations</h1>
@@ -88,7 +98,7 @@
     </thead>
     <tbody>
         {% for station in stations %}
-        <tr>
+        <tr class="table-row">
             <td>{{ station['Title'] }}</td>
             <td>{{ station['ID'] }}</td>
             <td>{{ station['ConnectionTypeID'] }}</td>
@@ -108,6 +118,43 @@
         </tr>
         {% endfor %}
     </tbody>
-</table>
+  </table>
+  <nav aria-label="Page navigation">
+    <ul class="pagination">
+    </ul>
+  </nav>
+</div>
+<script>
+    var currentPage = 1;
+    var itemsPerPage = 5;
+
+    function showPage(page) {
+        var startItem = (page - 1) * itemsPerPage;
+        var endItem = startItem + itemsPerPage;
+        $('.table-row').hide().slice(startItem, endItem).show();
+        currentPage = page;
+        updatePagination();
+    }
+
+    function updatePagination() {
+        $('.pagination li').removeClass('active');
+        $('.pagination li').eq(currentPage - 1).addClass('active');
+    }
+
+    $(document).ready(function() {
+        var totalItems = $('.table-row').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        for (var i = 1; i <= totalPages; i++) {
+            var li = $('<li class="page-item"><a class="page-link">' + i + '</a></li>');
+            li.find('a').click(function() {
+                var page = parseInt($(this).text());
+                showPage(page);
+            });
+            $('.pagination').append(li);
+        }
+        showPage(1);
+    });
+</script>
 </body>
 </html>
