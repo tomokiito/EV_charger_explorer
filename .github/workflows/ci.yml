@@ -32,4 +32,5 @@ jobs:
       run: |
         export PYTHONPATH="."
         export SECRET_KEY="${{ secrets.SECRET_KEY }}"
+        export MONGODB_URI="${{ secrets.MONGODB_URI }}"
         pytest
