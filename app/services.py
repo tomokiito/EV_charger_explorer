@@ -1,6 +1,9 @@
 import os
-from dotenv import load_dotenv
 import requests
+
+from dotenv import load_dotenv
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 
 def get_value_safe(data, *keys):
@@ -79,3 +82,23 @@ def autocomplete_address(query):
     }
     response = requests.get(url, params=params)
     return response.json()
+
+
+def register_to_database(uri, station_data):
+    # Create a new client and connect to the server
+    client = MongoClient(uri, server_api=ServerApi('1'))
+    db = client.get_database('Cluster0') 
+    collection = db.stations
+
+    try:
+        print("Data to be registered:", station_data) 
+        print("Data type:", type(station_data)) 
+        # Insert data
+        collection.insert_one(station_data)
+        print("Data registered successfully!")
+        return True
+    except Exception as e:
+        print(e)
+        return False
+    finally:
+        client.close()
