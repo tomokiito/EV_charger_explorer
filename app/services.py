@@ -102,3 +102,17 @@ def register_to_database(uri, station_data):
         return False
     finally:
         client.close()
+
+def delete_station_from_database(uri, station_data):
+    client = MongoClient(uri, server_api=ServerApi('1'))
+    db = client.get_database('Cluster0')
+    collection = db.stations
+
+    try:
+        # Delete data
+        collection.delete_one(station_data)
+        print(f"Data deleted successfully!")
+    except Exception as e:
+        print(e)
+    finally:
+        client.close()

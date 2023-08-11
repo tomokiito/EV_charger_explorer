@@ -41,6 +41,13 @@ def autocomplete():
 def register_station():
     # Get the posted data
     station_data = request.json
+
+    # Validate data (you can customize this part according to your needs)
+    required_keys = ['Title', 'ID', 'ConnectionTypeID', 'StatusTypeID', 'LevelID']
+    if not all(key in station_data for key in required_keys):
+        response = {"error": "Failed to register data - missing required fields"}
+        return jsonify(response), 400
+
     # Register data to the database
     success = register_to_database(app.config['MONGODB_URI'], station_data)
 
@@ -50,6 +57,7 @@ def register_station():
         response = {"error": "Failed to register data"}
 
     return jsonify(response)
+
 
 
 if __name__ == '__main__':
