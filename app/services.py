@@ -1,5 +1,6 @@
 import os
 import requests
+from collections import defaultdict
 
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
@@ -136,3 +137,51 @@ def delete_station_from_database(uri, station_id):
         return False
     finally:
         client.close()
+
+
+def analyze_stations(stations):
+    # Initialize analysis variables
+    charging_levels = {}
+    total_power = 0
+    status_types = {}
+
+    # Perform analysis for each station
+    for station in stations:
+
+        # Status types analysis
+        status_types = defaultdict(int)
+        for station in stations:
+            status_type = station['StatusType']
+            if status_type is None:
+                status_type = 'Unknown'  # Convert None to a string
+            status_types[status_type] += 1
+
+        # Charging levels analysis
+        level = station['Level']
+        charging_levels[level] = charging_levels.get(level, 0) + 1
+
+        # Determine how to access PowerKW value
+        power_kw = station['PowerKW']
+        if power_kw is None:
+            power_kw = 0.0  # Or continue to skip this record
+        elif isinstance(power_kw, dict) and '$numberDouble' in power_kw:
+            power_kw = float(power_kw['$numberDouble'])
+        else:
+            power_kw = float(power_kw)
+
+        # Average power supply analysis
+        total_power += power_kw
+
+        # Charging stations by status type analysis
+        status_type = station['StatusType']
+        status_types[status_type] = status_types.get(status_type, 0) + 1
+
+        # TODO: Regional distribution analysis (Requires defining regions)
+
+    # Return analysis results as a dictionary
+    return {
+        "charging_levels": charging_levels,
+        "average_power": total_power / len(stations) if stations else 0,
+        "status_types": status_types
+    }
+

@@ -6,6 +6,7 @@ from EV_charger_explorer.app.services import get_charging_stations
 from EV_charger_explorer.app.services import get_geocode
 from EV_charger_explorer.app.services import get_stations_near
 from EV_charger_explorer.app.services import autocomplete_address
+from EV_charger_explorer.app.services import analyze_stations
 
 
 @patch('requests.get')
@@ -200,3 +201,30 @@ def test_autocomplete_address(mock_get):
             'lon': '-96.3037'
         }
     ]
+
+
+def test_analyze_stations():
+    # Prepare test data
+    stations_data = [
+        {
+            "Level": "Level 2 : Medium (Over 2kW)",
+            "PowerKW": {"$numberDouble": "3.7"},
+            "StatusType": "Operational"
+        },
+        {
+            "Level": "Level 1 : Low (Under 2kW)",
+            "PowerKW": {"$numberDouble": "1.5"},
+            "StatusType": "Operational"
+        }
+    ]
+
+    # Call the function
+    analysis_result = analyze_stations(stations_data)
+
+    # Verify the result using assertions
+    assert analysis_result["charging_levels"] == {
+        "Level 2 : Medium (Over 2kW)": 1,
+        "Level 1 : Low (Under 2kW)": 1
+    }
+    assert analysis_result["average_power"] == (3.7 + 1.5) / 2
+    assert analysis_result["status_types"] == {"Operational": 2}

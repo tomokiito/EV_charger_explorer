@@ -4,6 +4,7 @@ from .services import autocomplete_address
 from .services import register_to_database
 from .services import get_stations_from_database
 from .services import delete_station_from_database
+from .services import analyze_stations
 
 
 
@@ -82,6 +83,20 @@ def delete_station():
 
     return jsonify(response)
 
+
+@app.route('/analyze', methods=['GET'])
+def analyze():
+    # Get charging stations from the database
+    db_stations = get_stations_from_database(app.config['MONGODB_URI'])
+
+    # Analyze the stations
+    analysis_result = analyze_stations(db_stations)
+
+    # Log the analysis result
+    print("Analysis Result:", analysis_result)
+
+    # Return the analysis result as JSON
+    return jsonify(analysis_result)
 
 
 if __name__ == '__main__':

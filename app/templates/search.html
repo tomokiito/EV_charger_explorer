@@ -43,6 +43,45 @@
             </div>
         </div>
 
+        <!-- Analysis Section -->
+        <div class="container mt-5">
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-12 text-center">
+                    <h2>Charging Stations Analysis</h2>
+                </div>
+            </div>
+
+            <!-- Row 1 -->
+            <div class="row mb-4">
+                <!-- Regional Distribution -->
+                <div class="col-lg-4 text-center">
+                    <h3>Regional Distribution</h3>
+                    <div id="regional-distribution-chart"></div>
+                </div>
+
+                <!-- Charging Levels -->
+                <div class="col-lg-4 text-center">
+                    <h3>Charging Levels</h3>
+                    <div id="charging-levels-chart"></div>
+                </div>
+
+                <!-- Average Power Supply -->
+                <div class="col-lg-4 text-center">
+                    <h3>Average Power Supply</h3>
+                    <div id="average-power-chart"></div>
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="row mb-4">
+                <!-- Status Types -->
+                <div class="col-lg-4 offset-lg-4 text-center">
+                    <h3>Status Types</h3>
+                    <div id="status-types-chart"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Charging Stations Table -->
         <div class="row justify-content-center">
             <div class="col-lg-12">
@@ -176,6 +215,24 @@
                 $('.pagination').append(li);
             }
             showPage(1);
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Call the analyze endpoint
+            $.get("/analyze", function(data) {
+                // TODO: Visualize the results in charts or other preferred formats
+
+                // Example: Display charging levels as text (replace with desired visualization)
+                $("#charging-levels-chart").text(JSON.stringify(data.charging_levels));
+
+                // Example: Display average power as text
+                $("#average-power-chart").text(data.average_power.toFixed(2) + " kW");
+
+                // Example: Display status types as text
+                $("#status-types-chart").text(JSON.stringify(data.status_types));
+            });
         });
     </script>
 
