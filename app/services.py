@@ -62,6 +62,19 @@ def get_geocode(address, api_key):
     data = response.json()
     return data[0]["lat"], data[0]["lon"]
 
+
+def get_country(latitude, longitude, api_key):
+    url = f"https://us1.locationiq.com/v1/reverse.php?key={api_key}&lat={latitude}&lon={longitude}&format=json"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        country = data.get('address', {}).get('country')
+        return country
+    else:
+        print(f"Error fetching data: {response.text}")
+        return None
+
+
 def get_stations_near(address):
     #API keys
     locationiq_api_key = os.getenv('LOCATIONIQ_API_KEY')
@@ -170,7 +183,8 @@ def analyze_stations(stations):
             status_type = 'Unknown'  # Convert None to a string
         status_types[status_type] += 1
 
-        # TODO: Regional distribution analysis (Requires defining regions)
+        # Regional distribution analysis
+
 
     # Return analysis results as a dictionary
     return {
