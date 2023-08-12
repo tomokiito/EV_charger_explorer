@@ -3,11 +3,13 @@ from .services import get_stations_near
 from .services import autocomplete_address
 from .services import register_to_database
 from .services import get_stations_from_database
+from .services import delete_station_from_database
+
+
 
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
-from pymongo import MongoClient
 
 
 load_dotenv()  # take environment variables from .env.
@@ -65,6 +67,21 @@ def register_station():
 def get_stations():
     stations = get_stations_from_database(app.config['MONGODB_URI'])
     return jsonify(stations)
+
+
+@app.route('/delete_station', methods=['POST'])
+def delete_station():
+    station_data = request.json
+    station_id = station_data["_id"]
+    success = delete_station_from_database(app.config['MONGODB_URI'], station_id)
+
+    if success:
+        response = {"message": "Data deleted successfully!"}
+    else:
+        response = {"error": "Failed to delete data"}
+
+    return jsonify(response)
+
 
 
 if __name__ == '__main__':

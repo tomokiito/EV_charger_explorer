@@ -4,6 +4,7 @@ import requests
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from bson.objectid import ObjectId
 
 
 def get_value_safe(data, *keys):
@@ -103,25 +104,35 @@ def register_to_database(uri, station_data):
     finally:
         client.close()
 
-def delete_station_from_database(uri, station_data):
-    client = MongoClient(uri, server_api=ServerApi('1'))
-    db = client.get_database('Cluster0')
-    collection = db.stations
-
-    try:
-        # Delete data
-        collection.delete_one(station_data)
-        print(f"Data deleted successfully!")
-    except Exception as e:
-        print(e)
-    finally:
-        client.close()
-
 
 def get_stations_from_database(uri):
     client = MongoClient(uri, server_api=ServerApi('1'))
     db = client.get_database('Cluster0')
     collection = db.stations
     stations = list(collection.find({}))
+    # Convert ObjectId to string
+    for station in stations:
+        station['_id'] = str(station['_id'])
     client.close()
     return stations
+
+
+def delete_station_from_database(uri, station_id):
+    client = MongoClient(uri, server_api=ServerApi('1'))
+    db = client.get_database('Cluster0')
+    collection = db.stations
+
+    try:
+        # Delete data by _id
+        result = collection.delete_one({"_id": ObjectId(station_id)})
+        if result.deleted_count > 0:
+            print(f"Data deleted successfully!")
+            return True
+        else:
+            print(f"No data found for deletion!")
+            return False
+    except Exception as e:
+        print(e)
+        return False
+    finally:
+        client.close()

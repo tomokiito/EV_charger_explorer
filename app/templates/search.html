@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>EV Charger Explorer</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     <style>
         .table-container {
             overflow-x: auto;
@@ -28,7 +28,8 @@
                     {{ form.hidden_tag() }}
                     <div class="form-group mb-2">
                         {{ form.address.label }}
-                        {{ form.address(class="form-control mr-2") }}
+                        <input type="text" class="form-control mr-2" id="address" name="address" list="address_list">
+                        <datalist id="address_list"></datalist>
                     </div>
                     <button type="submit" class="btn btn-primary mb-2">Search</button>
                 </form>
@@ -66,7 +67,7 @@
                             {% for station in db_stations %}
                             <tr class="table-row">
                                 <td>
-                                    <button class="btn btn-primary" onclick="registerToDatabase('{{ station }}')">Register</button>
+                                    <button class="btn btn-danger" onclick='deleteStation("{{ station['_id'] }}")'>Delete</button>
                                 </td>
                                 <td>{{ station['Title'] }}</td>
                                 <td>{{ station['ID'] }}</td>
@@ -92,5 +93,46 @@
             </div>
         </div>
     </div>
+    <script>
+        function deleteStation(stationId) {
+            var confirmation = confirm("Are you sure you want to delete this station?");
+            if (confirmation) {
+                fetch('/delete_station', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ "_id": stationId })
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        location.reload(); // Reload the page to reflect the deletion
+                    } else {
+                        alert(data.error);
+                    }
+                });
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#address').on('keyup', function() {
+                var query = $(this).val();
+                if (query.length > 2 && query.length < 10) {
+                    $.getJSON('/autocomplete', {
+                        q: query
+                    }, function(data) {
+                        var options = '';
+                        for (var i in data) {
+                            options += '<option value="' + data[i].display_name + '">';
+                        }
+                        $('#address_list').html(options);
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
