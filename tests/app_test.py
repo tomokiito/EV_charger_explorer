@@ -42,11 +42,15 @@ def test_register_station_success(client):
         'Voltage': 230
     }
     response = client.post('/register', json=station_data)
-    assert response.status_code == 200
-    assert response.get_json()['message'] == "Data registered successfully!"
+    response_data = response.get_json()
+    station_object_id = response_data['station_object_id']
 
     # Delete the test data
-    delete_station_from_database(flask_app.config['MONGODB_URI'], station_data)
+    delete_station_from_database(flask_app.config['MONGODB_URI'], station_object_id)
+
+    assert response.status_code == 200
+    assert response_data['message'] == "Data registered successfully!"
+    
 
 
 def test_register_station_failure(client):

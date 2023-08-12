@@ -54,10 +54,10 @@ def register_station():
         return jsonify(response), 400
 
     # Register data to the database
-    success = register_to_database(app.config['MONGODB_URI'], station_data)
+    success, station_object_id = register_to_database(app.config['MONGODB_URI'], station_data)
 
     if success:
-        response = {"message": "Data registered successfully!"}
+        response = {"message": "Data registered successfully!", "station_object_id": str(station_object_id)}
     else:
         response = {"error": "Failed to register data"}
 

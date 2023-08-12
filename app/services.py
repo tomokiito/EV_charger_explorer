@@ -109,9 +109,9 @@ def register_to_database(uri, station_data):
         print("Data to be registered:", station_data) 
         print("Data type:", type(station_data)) 
         # Insert data
-        collection.insert_one(station_data)
+        result = collection.insert_one(station_data)
         print("Data registered successfully!")
-        return True
+        return True, result.inserted_id
     except Exception as e:
         print(e)
         return False
