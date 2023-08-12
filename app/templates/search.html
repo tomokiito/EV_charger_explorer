@@ -11,6 +11,13 @@
     </style>
 </head>
 <body>
+    <style>
+        .table-container {
+            width: 1200px; 
+            margin: 0 auto; 
+            overflow-x: auto; 
+        }
+    </style>
     <div class="container mt-5">
         <!-- Title -->
         <div class="row justify-content-center mb-4">
@@ -89,6 +96,10 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -134,5 +145,39 @@
             });
         });
     </script>
+
+    <script>
+        var currentPage = 1;
+        var itemsPerPage = 5;
+
+        function showPage(page) {
+            var startItem = (page - 1) * itemsPerPage;
+            var endItem = startItem + itemsPerPage;
+            $('.table-row').hide().slice(startItem, endItem).show();
+            currentPage = page;
+            updatePagination();
+        }
+
+        function updatePagination() {
+            $('.pagination li').removeClass('active');
+            $('.pagination li').eq(currentPage - 1).addClass('active');
+        }
+
+        $(document).ready(function() {
+            var totalItems = $('.table-row').length;
+            var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            for (var i = 1; i <= totalPages; i++) {
+                var li = $('<li class="page-item"><a class="page-link">' + i + '</a></li>');
+                li.find('a').click(function() {
+                    var page = parseInt($(this).text());
+                    showPage(page);
+                });
+                $('.pagination').append(li);
+            }
+            showPage(1);
+        });
+    </script>
+
 </body>
 </html>
