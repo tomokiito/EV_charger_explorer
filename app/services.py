@@ -116,3 +116,12 @@ def delete_station_from_database(uri, station_data):
         print(e)
     finally:
         client.close()
+
+
+def get_stations_from_database(uri):
+    client = MongoClient(uri, server_api=ServerApi('1'))
+    db = client.get_database('Cluster0')
+    collection = db.stations
+    stations = list(collection.find({}))
+    client.close()
+    return stations
