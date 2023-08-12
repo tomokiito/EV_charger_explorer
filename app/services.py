@@ -143,18 +143,10 @@ def analyze_stations(stations):
     # Initialize analysis variables
     charging_levels = {}
     total_power = 0
-    status_types = {}
+    status_types = defaultdict(int)  # Initialize as defaultdict
 
     # Perform analysis for each station
     for station in stations:
-
-        # Status types analysis
-        status_types = defaultdict(int)
-        for station in stations:
-            status_type = station['StatusType']
-            if status_type is None:
-                status_type = 'Unknown'  # Convert None to a string
-            status_types[status_type] += 1
 
         # Charging levels analysis
         level = station['Level']
@@ -174,7 +166,9 @@ def analyze_stations(stations):
 
         # Charging stations by status type analysis
         status_type = station['StatusType']
-        status_types[status_type] = status_types.get(status_type, 0) + 1
+        if status_type is None:
+            status_type = 'Unknown'  # Convert None to a string
+        status_types[status_type] += 1
 
         # TODO: Regional distribution analysis (Requires defining regions)
 
@@ -182,6 +176,7 @@ def analyze_stations(stations):
     return {
         "charging_levels": charging_levels,
         "average_power": total_power / len(stations) if stations else 0,
-        "status_types": status_types
+        "status_types": dict(status_types)  # Convert defaultdict to regular dict
     }
+
 

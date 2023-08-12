@@ -208,12 +208,12 @@ def test_analyze_stations():
     stations_data = [
         {
             "Level": "Level 2 : Medium (Over 2kW)",
-            "PowerKW": {"$numberDouble": "3.7"},
+            "PowerKW": 3.7,
             "StatusType": "Operational"
         },
         {
             "Level": "Level 1 : Low (Under 2kW)",
-            "PowerKW": {"$numberDouble": "1.5"},
+            "PowerKW": 1.5,
             "StatusType": "Operational"
         }
     ]
@@ -227,4 +227,5 @@ def test_analyze_stations():
         "Level 1 : Low (Under 2kW)": 1
     }
     assert analysis_result["average_power"] == (3.7 + 1.5) / 2
-    assert analysis_result["status_types"] == {"Operational": 2}
+    assert analysis_result["status_types"] == {"Operational": 2} 
+
