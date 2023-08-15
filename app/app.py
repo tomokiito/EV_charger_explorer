@@ -11,6 +11,7 @@ from .services import analyze_stations
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify
+from datetime import datetime
 
 
 load_dotenv()  # take environment variables from .env.
@@ -19,6 +20,35 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['GOOGLE_MAPS_API_KEY'] = os.getenv('GOOGLE_MAPS_API_KEY')
 app.config['MONGODB_URI'] = os.getenv('MONGODB_URI')
+
+
+# To store the number of requests and the last request time
+request_data = {
+    "total_requests": 0,
+    "last_request_time": None
+}
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return "OK", 200
+
+
+@app.route('/metrics', methods=['GET'])
+def metrics():
+    current_time = datetime.now()
+    time_difference = (current_time - request_data["last_request_time"]).total_seconds() if request_data["last_request_time"] else 0
+    requests_per_second = request_data["total_requests"] / time_difference if time_difference != 0 else 0
+
+    return jsonify({
+        "requests_per_second": requests_per_second
+    }), 200
+
+
+@app.before_request
+def before_request():
+    request_data["total_requests"] += 1
+    request_data["last_request_time"] = datetime.now()
+
 
 
 @app.route('/', methods=['GET', 'POST'])
